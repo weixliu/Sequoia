@@ -3,6 +3,7 @@
 import akshare as ak
 import logging
 import talib as tl
+import datetime
 
 import concurrent.futures
 
@@ -16,6 +17,8 @@ def fetch(code_name):
         return
 
     data['p_change'] = tl.ROC(data['收盘'], 1)
+
+    data.to_csv(f"data/{datetime.datetime.now().strftime('%Y-%m-%d')}/{stock}.csv", index=False)
 
     return data
 
