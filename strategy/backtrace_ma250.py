@@ -3,7 +3,7 @@
 import talib as tl
 import pandas as pd
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 
 
 # 使用示例：result = backtrace_ma250.check(code_name, data, end_date=end_date)
@@ -11,6 +11,11 @@ from datetime import datetime, timedelta
 # [('601616', '广电电气'), ('002243', '通产丽星'), ('000070', '特发信息'), ('300632', '光莆股份'), ('601700', '风范股份'), ('002017', '东信和平'), ('600775', '南京熊猫'), ('300265', '通光线缆'), ('600677', '航天通信'), ('600776', '东方通信')]
 # 当然，该函数中的参数可能存在过拟合的问题
 
+def get_date(date_data, formatter):
+    if isinstance(date_data, date):
+        return date_data
+    else:
+        return datetime.strptime(date_data, formatter).date()
 
 # 回踩年线策略
 def check(code_name, data, end_date=None, threshold=60):
@@ -69,8 +74,8 @@ def check(code_name, data, end_date=None, threshold=60):
             if row['收盘'] < recent_lowest_row['收盘']:
                 recent_lowest_row = row
 
-    date_diff = datetime.date(datetime.strptime(recent_lowest_row['日期'], '%Y-%m-%d')) - \
-                datetime.date(datetime.strptime(highest_row['日期'], '%Y-%m-%d'))
+    date_diff = get_date(recent_lowest_row['日期'], '%Y-%m-%d') - \
+                get_date(highest_row['日期'], '%Y-%m-%d')
 
     if not(timedelta(days=10) <= date_diff <= timedelta(days=50)):
         return False

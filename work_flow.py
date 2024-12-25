@@ -20,6 +20,7 @@ import datetime
 def prepare():
     logging.info("************************ process start ***************************************")
     all_data = ak.stock_zh_a_spot_em()
+    all_data.to_csv(f"data/{datetime.datetime.now().strftime('%Y-%m-%d')}/all_data.csv", index=False)
     subset = all_data[['代码', '名称']]
     stocks = [tuple(x) for x in subset.values]
     statistics(all_data, stocks)
@@ -52,7 +53,8 @@ def process(stocks, strategies):
 
 def check(stocks_data, strategy, strategy_func):
     end = settings.config['end_date']
-    m_filter = check_enter(end_date=end, strategy_fun=strategy_func)
+    end_date = datetime.datetime.strptime(end, '%Y-%m-%d').date()
+    m_filter = check_enter(end_date=end_date, strategy_fun=strategy_func)
     results = dict(filter(m_filter, stocks_data.items()))
     if len(results) > 0:
         push.strategy('**************"{0}"**************\n{1}\n**************"{0}"**************\n'.format(strategy, list(results.keys())))
