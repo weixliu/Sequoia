@@ -15,8 +15,16 @@ def job():
         work_flow.prepare()
 
 
-logging.basicConfig(format='%(asctime)s %(message)s', filename='sequoia.log')
-logging.getLogger().setLevel(logging.INFO)
+logger = logging.getLogger()
+# set log level
+logger.setLevel(logging.INFO)
+
+# file handler
+handler = logging.FileHandler('sequoia.log', mode='w', encoding='utf-8')
+handler.setFormatter(logging.Formatter("%(asctime)s-%(name)s-%(levelname)s: %(message)s"))
+
+logger.addHandler(handler)
+
 settings.init()
 
 if settings.config['cron']:
